@@ -1,4 +1,4 @@
-# # 📊 Customer Churn Prediction & Lifetime Value (LTV) System
+# 📊 Customer Churn Prediction & Lifetime Value (LTV) System
 
 ## 🚀 Overview
 This project is a **production-level data analytics system** designed to predict customer churn and estimate Customer Lifetime Value (LTV) for a telecom or subscription-based business.
