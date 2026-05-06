@@ -51,21 +51,50 @@ Raw Dataset → PostgreSQL → Data Processing → Machine Learning Models → A
 ---
 
 ## 📂 Project Structure
-customer-churn-ltv-system/
+customer_churn_ltv_system/
 │
 ├── data/
+│   ├── raw/
+│   ├── processed/
+│
 ├── notebooks/
+│   ├── eda.ipynb
+│   ├── feature_engineering.ipynb
+│
 ├── src/
-│ ├── data_engineering/
-│ ├── preprocessing/
-│ ├── models/
-│ ├── ltv/
+│   ├── data_engineering/
+│   │   ├── ingest.py
+│   │   ├── database.py
+│   │
+│   ├── preprocessing/
+│   │   ├── clean_data.py
+│   │   ├── feature_engineering.py
+│   │
+│   ├── models/
+│   │   ├── train_model.py
+│   │   ├── predict.py
+│   │
+│   ├── ltv/
+│   │   ├── ltv_model.py
+│   │
+│   ├── utils/
+│   │   ├── config.py
+│   │   ├── helpers.py
 │
 ├── api/
+│   ├── main.py
+│   ├── routes.py
+│   ├── schemas.py
+│
 ├── dashboard/
+│   ├── (for Superset/Metabase configs later)
+│
 ├── models/
+│   ├── saved_models/
+│
 ├── requirements.txt
-└── README.md
+├── README.md
+├── .gitignore
 
 ---
 
