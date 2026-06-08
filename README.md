@@ -1,6 +1,6 @@
-# 📊 Customer Churn Prediction & Lifetime Value (LTV) System
+# Customer Churn Prediction & Lifetime Value (LTV) System
 
-## 🚀 Overview
+## Overview
 This project is a **production-level data analytics system** designed to predict customer churn and estimate Customer Lifetime Value (LTV) for a telecom or subscription-based business.
 
 The system enables organizations to:
@@ -10,7 +10,7 @@ The system enables organizations to:
 
 ---
 
-## 🧠 Problem Statement
+## Problem Statement
 Customer churn directly impacts revenue and growth in subscription-based businesses.  
 This project aims to:
 - Predict the probability of customer churn  
@@ -19,38 +19,39 @@ This project aims to:
 
 ---
 
-## 🏗️ System Architecture
+## System Architecture
 
 Raw Dataset → PostgreSQL → Data Processing → Machine Learning Models → API → Dashboard  
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
-### 👨‍💻 Programming Languages
+### Programming Languages
 - Python  
 - SQL  
 
-### 🗄️ Data Engineering & Storage
+### Data Engineering & Storage
 - PostgreSQL  
 - SQLAlchemy  
 
-### 📊 Data Analysis & Machine Learning
+### Data Analysis & Machine Learning
 - Pandas  
-- NumPy  
+- NumPy
+- Seaborn  
 - Scikit-learn  
 - XGBoost  
 - SHAP (Model Explainability)  
 
-### 🌐 API Layer
+### API Layer
 - FastAPI  
 
-### 📈 Visualization & Dashboard
+### Visualization & Dashboard
 - Metabase / Apache Superset  
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 customer_churn_ltv_system/
 │
 ├── data/
