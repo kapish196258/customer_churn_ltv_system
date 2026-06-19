@@ -20,6 +20,9 @@ This project aims to:
 ---
 
 ## Current Project Status
+- PostgreSQL Query Analysis → Completed
+- Feature Engineering → Completed
+- Model Training → Completed
 
 ### Completed
 
@@ -35,10 +38,17 @@ This project aims to:
 - PostgreSQL-Python Integration
 - Dataset Upload to PostgreSQL
 - Environment Variable Security (.env)
+- Model Preparation (Train-Test Split & Feature Scaling)
+- Multi-Model Training & Evaluation
+- Final Model Selection (Logistic Regression)
+- Model Persistence using Joblib (.pkl)
+- Prediction Pipeline ("churn_predict.py")
+
 
 ### In Progress
 
 - PostgreSQL Query Analysis
+- SHAP Model Explainability
 
 ### Upcoming
 
@@ -116,49 +126,32 @@ The cleaned dataset is stored inside PostgreSQL and will be used for feature eng
 
 ## Project Structure
 customer_churn_ltv_system/
-│
+├── api/
 ├── data/
 │   ├── raw/
-│   ├── processed/
-│
+│   └── processed/
+├── models/
+│   └── saved_model/
+│       └── logistic_regression_model.pkl
 ├── notebooks/
 │   ├── eda.ipynb
+│   ├── data_cleaning.ipynb
 │   ├── feature_engineering.ipynb
-│
+│   ├── model_preparation.ipynb
+│   ├── model_training.ipynb
+│   └── shap_analysis.ipynb
+├── reports/
 ├── src/
-│   ├── data_engineering/
-│   │   ├── ingest.py
-│   │   ├── database.py
-│   │
+│   ├── database/
+│   │   └── connection.py
 │   ├── preprocessing/
-│   │   ├── clean_data.py
-│   │   ├── feature_engineering.py
-│   │
-│   ├── models/
-│   │   ├── train_model.py
-│   │   ├── predict.py
-│   │
-│   ├── ltv/
-│   │   ├── ltv_model.py
-│   │
-│   ├── utils/
-│   │   ├── config.py
-│   │   ├── helpers.py
-│
-├── api/
-│   ├── main.py
-│   ├── routes.py
-│   ├── schemas.py
-│
-├── dashboard/
-│   ├── (for Superset/Metabase configs later)
-│
-├── models/
-│   ├── saved_models/
-│
+│   │   ├── clean.py
+│   │   └── feature_engineering.py
+│   └── models/
+│       └── churn_predict.py
 ├── requirements.txt
 ├── README.md
-├── .gitignore
+└── .gitignore
 
 ---
 
@@ -180,16 +173,28 @@ Database passwords and local configuration files are never pushed to the reposit
 
 | Phase | Status |
 |---------|---------|
-| Project Setup | Completed |
-| EDA | Completed |
-| Data Cleaning | Completed |
-| PostgreSQL Integration | Completed |
-| PostgreSQL Query Analysis | In Progress |
-| Feature Engineering | Pending |
-| Model Training | Pending |
-| FastAPI Development | Pending |
-| Dashboard Development | Pending |
-| Deployment | Pending |
-
+| Project Setup| Completed
+| EDA| Completed
+| Data Cleaning| Completed
+| PostgreSQL Integration| Completed
+| PostgreSQL Query Analysis| Completed
+| Feature Engineering| Completed
+| Model Preparation| Completed
+| Model Training| Completed
+| Model Training & Evaluation| Completed
+| Model Selection & Persistence| Completed
+| SHAP Explainability| In Progress
+| FastAPI Development| Pending
+| Dashboard Development| Pending
+| Deployment| Pending
 ---
 
+## Recent Updates
+
+- Completed PostgreSQL Query Analysis
+- Completed Feature Engineering Pipeline
+- Completed Model Preparation (Train-Test Split & Feature Scaling)
+- Completed Multi-Model Training and Evaluation
+- Selected Logistic Regression as the final model
+- Added model persistence using Joblib (".pkl")
+- Added prediction pipeline ("churn_predict.py")
