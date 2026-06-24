@@ -70,7 +70,7 @@ This project aims to:
 
 ## System Architecture
 
-```text
+
 Raw Dataset
     ↓
 Data Cleaning & Preprocessing
@@ -98,13 +98,14 @@ PostgreSQL Business Analytics Tables
 Dashboard Development (Metabase)
     ↓
 Business Insights & Retention Strategy
+
 ---
 
 ## Tech Stack
 
 ### Programming Languages
 - Python  
-- SQL  
+- SQL 
 
 ### Data Engineering & Storage
 - PostgreSQL  
@@ -134,9 +135,9 @@ Database: PostgreSQL
 
 Database Name:
 
-customer_churn_db
+`customer_churn_db`
 
-Main Table:
+### Tables Used
 
 | Table Name | Purpose |
 |----------|---------|
@@ -145,11 +146,11 @@ Main Table:
 | `high_priority_customers` | Subset of High Value - High Risk customers for retention-focused analysis |
 
 The PostgreSQL database is used to store cleaned data, final LTV-enhanced customer data, and high-priority customer segments. These tables will later support SQL analysis, dashboard development, and business reporting.
+
 ---
 
 ## Project Structure
 
-```text
 customer_churn_ltv_system/
 ├── api/
 │   ├── main.py
@@ -189,8 +190,6 @@ customer_churn_ltv_system/
 ├── requirements.txt
 ├── README.md
 └── .gitignore
-
-```
 
 ---
 
@@ -233,7 +232,6 @@ Database passwords and local configuration files are never pushed to the reposit
 | Dockerization | Pending |
 | Deployment | Pending |
 
-
 ---
 
 ## Recent Updates
@@ -258,8 +256,7 @@ The churn prediction model is exposed using FastAPI.
 
 To run the API locally:
 
-```bash
-uvicorn api.main:app --reload
+`uvicorn api.main:app --reload`
 
 **Open Swagger UI:** http://127.0.0.1:8000/docs
 
