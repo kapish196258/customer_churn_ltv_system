@@ -11,6 +11,7 @@ The system helps organizations:
 * Segment customers into Low Value, Medium Value, and High Value groups
 * Prioritize high-value customers for retention campaigns
 * Analyze revenue risk caused by churn
+* Store prediction history for customer-level tracking
 * Support business teams with dashboard-ready insights
 
 ---
@@ -26,13 +27,16 @@ This project aims to:
 * Identify high-value customers who are at churn risk
 * Provide actionable insights through PostgreSQL analysis
 * Build an interactive Metabase dashboard for business users
+* Provide a FastAPI-based prediction service
+* Store API prediction history in PostgreSQL
+* Containerize the FastAPI service using Docker
 * Support data-driven customer retention and customer success strategies
 
 ---
 
-## Current Project Status
+## Final Project Status
 
-The main project workflow has been completed.
+The complete project workflow has been completed.
 
 ### Completed
 
@@ -55,11 +59,15 @@ The main project workflow has been completed.
 * Multi-model training and evaluation
 * Final model selection
 * Model persistence using Joblib
-* Prediction pipeline
+* Churn prediction pipeline with scaling
 * SHAP model explainability
 * FastAPI setup
 * FastAPI prediction endpoint
 * Swagger UI testing
+* API input schema descriptions
+* FastAPI prediction screenshots
+* Prediction history logging in PostgreSQL
+* Prediction history export as CSV
 * Customer Lifetime Value modeling
 * LTV segmentation
 * Customer priority matrix
@@ -71,15 +79,17 @@ The main project workflow has been completed.
 * Interactive LTV Segment dashboard filter
 * Dashboard SQL query documentation
 * Dashboard screenshots
-* FastAPI prediction screenshot
+* Dockerfile creation
+* Docker image build
+* Docker container run test
+* Docker runtime dependency file
 * Final project documentation
 
-### Optional Future Enhancements
+### Future Enhancements
 
-* Dockerization
 * Cloud deployment
-* Automated model retraining
 * CI/CD pipeline
+* Automated model retraining
 * API monitoring
 * Dashboard deployment on a shared server
 
@@ -105,6 +115,8 @@ Model Evaluation & Selection
 Model Explainability using SHAP
     ↓
 FastAPI Prediction API
+    ↓
+Prediction History Logging in PostgreSQL
     ↓
 Customer Lifetime Value Modeling
     ↓
@@ -154,6 +166,11 @@ Business Insights & Retention Strategy
 
 * Metabase
 
+### Deployment & Containerization
+
+* Docker
+* Docker Desktop
+
 ### Version Control
 
 * Git
@@ -194,8 +211,9 @@ customer_churn_db
 | `telco_customer_churn`    | Cleaned customer churn dataset stored in PostgreSQL                                              |
 | `customer_churn_ltv`      | Final analytics table containing churn, LTV, customer segments, priority groups, and Customer_ID |
 | `high_priority_customers` | Subset of High Value - High Risk customers for retention-focused analysis                        |
+| `prediction_history`      | Stores FastAPI prediction results including customer ID, churn prediction, probability, and LTV  |
 
-The PostgreSQL database stores cleaned data, final LTV-enhanced customer data, and high-priority customer segments. These tables support SQL analysis, dashboard development, and business reporting.
+The PostgreSQL database stores cleaned data, final LTV-enhanced customer data, high-priority customer segments, and API prediction history. These tables support SQL analysis, dashboard development, API tracking, and business reporting.
 
 ---
 
@@ -372,13 +390,10 @@ These customers have high estimated lifetime value and are at churn risk.
 
 ## Project Structure
 
-## Project Structure
-
 ```text
 customer_churn_ltv_system/
 ├── api/
 │   ├── main.py
-│   ├── routes.py
 │   ├── schemas.py
 │   └── screenshots/
 │       ├── fastapi_swagger_input.png
@@ -401,11 +416,13 @@ customer_churn_ltv_system/
 ├── data/
 │   ├── raw/
 │   │   └── Telco-Customer-Churn.csv
-│   └── processed/
-│       ├── cleaned_telco_data.csv
-│       ├── feature_engineered_data.csv
-│       ├── customer_churn_ltv_final.csv
-│       └── high_priority_customers.csv
+│   ├── processed/
+│   │   ├── cleaned_telco_data.csv
+│   │   ├── feature_engineered_data.csv
+│   │   ├── customer_churn_ltv_final.csv
+│   │   └── high_priority_customers.csv
+│   └── predicted/
+│       └── prediction_history.csv
 ├── models/
 │   └── saved_model/
 │       ├── logistic_regression_model.pkl
@@ -424,7 +441,8 @@ customer_churn_ltv_system/
 ├── reports/
 ├── src/
 │   ├── database/
-│   │   └── connection.py
+│   │   ├── connection.py
+│   │   └── prediction_history.py
 │   ├── preprocessing/
 │   │   ├── clean_data.py
 │   │   ├── featureengineering.py
@@ -512,6 +530,14 @@ The trained model was saved using Joblib:
 models/saved_model/logistic_regression_model.pkl
 ```
 
+A final churn prediction pipeline was also created for API use:
+
+```text
+models/saved_model/churn_prediction_pipeline.pkl
+```
+
+The pipeline includes scaling and the trained Logistic Regression model so the FastAPI service can make consistent predictions.
+
 ---
 
 ## Model Explainability
@@ -548,15 +574,32 @@ The API provides a prediction endpoint that returns:
 
 * Churn prediction
 * Churn probability
+* Estimated LTV
+* Prediction history logging status
 
 Example response:
 
 ```json
 {
   "prediction": 1,
-  "churn_probability": 1
+  "churn_probability": 0.7505,
+  "estimated_ltv": 118.75,
+  "history_logged": true
 }
 ```
+
+### API Input Format
+
+The FastAPI `/predict` endpoint accepts model-ready encoded numerical input.
+
+Swagger UI includes field-level descriptions explaining the meaning of encoded values, such as:
+
+* `gender`: 0 = Male, 1 = Female
+* `SeniorCitizen`: 0 = Not senior citizen, 1 = Senior citizen
+* `PhoneService`: 0 = No phone service, 1 = Has phone service
+* One-hot encoded fields use 1 to represent the selected category and 0 otherwise
+
+This keeps the API input consistent with the feature-engineered data used during model training.
 
 ### FastAPI Swagger Interface
 
@@ -569,6 +612,38 @@ The FastAPI application provides an interactive Swagger UI where users can test 
 The `/predict` endpoint was tested successfully. The API returned a churn prediction of `1`, meaning the customer is likely to churn, with a churn probability of `0.7505`.
 
 ![FastAPI Prediction Result](api/screenshots/fastapi_prediction.png)
+
+---
+
+## Prediction History Logging
+
+The project includes prediction history logging for customer-level tracking.
+
+When a prediction is made through the FastAPI `/predict` endpoint, the result is saved into PostgreSQL.
+
+### Prediction History Table
+
+```text
+prediction_history
+```
+
+The table stores:
+
+* Customer ID
+* Churn prediction
+* Churn probability
+* Estimated LTV
+* Prediction timestamp
+
+### Prediction History Export
+
+A sample prediction history export containing 10 predicted customers is stored at:
+
+```text
+data/predicted/prediction_history.csv
+```
+
+This file demonstrates how API predictions can be tracked and reviewed for future customer retention actions.
 
 ---
 
@@ -646,6 +721,7 @@ However, Customer_ID was restored later for business analytics because customer-
 * Retention actions
 * Customer success follow-up
 * High-priority customer tracking
+* Prediction history tracking
 
 ---
 
@@ -866,7 +942,27 @@ Open:
 http://127.0.0.1:8000/docs
 ```
 
-### 7. Run Metabase Locally
+### 7. Run FastAPI with Docker
+
+Build the Docker image:
+
+```bash
+docker build -t customer-churn-ltv-api .
+```
+
+Run the Docker container:
+
+```bash
+docker run --rm -p 8000:8000 customer-churn-ltv-api
+```
+
+Open:
+
+```text
+http://localhost:8000/docs
+```
+
+### 8. Run Metabase Locally
 
 Start Metabase from the Metabase installation directory:
 
@@ -892,8 +988,11 @@ This project helps the business identify:
 * Which customer segments create the highest revenue risk
 * Which customer groups need targeted retention campaigns
 * Which high-value customers require immediate business action
+* Which API-predicted customers should be tracked for future retention action
 
 The `high_priority_customers` dataset contains customers who are both high-value and at risk of churn, making it useful for retention campaigns and customer success actions.
+
+The `prediction_history` table and exported `prediction_history.csv` file help track customer-level predictions generated through the FastAPI service.
 
 ---
 
@@ -904,6 +1003,7 @@ The `high_priority_customers` dataset contains customers who are both high-value
 * Improve customer retention strategy
 * Support targeted marketing campaigns
 * Enable customer-level retention actions
+* Track API prediction history for customer follow-up
 * Provide dashboard-ready insights to business teams
 * Improve decision-making using churn, LTV, and revenue risk analysis
 
@@ -911,7 +1011,7 @@ The `high_priority_customers` dataset contains customers who are both high-value
 
 ## Final Summary
 
-This project combines machine learning, customer lifetime value modeling, PostgreSQL analytics, FastAPI prediction API, and Metabase dashboarding into one complete customer churn and retention analytics system.
+This project combines machine learning, customer lifetime value modeling, PostgreSQL analytics, FastAPI prediction API, Docker containerization, prediction history logging, and Metabase dashboarding into one complete customer churn and retention analytics system.
 
 The final solution provides:
 
@@ -920,6 +1020,8 @@ The final solution provides:
 * LTV estimation
 * Customer segmentation
 * High-priority customer identification
+* Prediction history logging
+* Dockerized FastAPI service
 * Business SQL analysis
 * Interactive Metabase dashboard
 * LTV Segment filtering

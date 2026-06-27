@@ -3,6 +3,12 @@ from pydantic import BaseModel, Field
 
 
 class CustomerData(BaseModel):
+    customer_id: str | None = Field(
+        default=None,
+        description="Optional customer ID for storing prediction history. This field is not used by the ML model.",
+        example="7590-VHVEG"
+    )
+
     gender: Literal[0, 1] = Field(
         ...,
         description="0 = Male, 1 = Female",

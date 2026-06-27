@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from api.schemas import CustomerData
 from src.models.churn_predict import predict_churn
 import pandas as pd
+from src.database.prediction_history import save_prediction_history
 
 
 app = FastAPI(
@@ -83,4 +84,18 @@ def predict(data: CustomerData):
 
     result = predict_churn(customer_df)
 
-    return result
+    estimated_ltv = round(float(data.MonthlyCharges * data.tenure), 2)
+
+    history_logged = save_prediction_history(
+        customer_id=data.customer_id,
+        churn_prediction=result["prediction"],
+        churn_probability=result["churn_probability"],
+        estimated_ltv=estimated_ltv
+    )
+
+    return {
+        "prediction": result["prediction"],
+        "churn_probability": result["churn_probability"],
+        "estimated_ltv": estimated_ltv,
+        "history_logged": history_logged
+    }
