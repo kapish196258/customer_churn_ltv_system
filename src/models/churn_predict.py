@@ -1,15 +1,26 @@
 import joblib
 import pandas as pd
 
-model = joblib.load("models/saved_model/logistic_regression_model.pkl")
 
-def predict_churn(customer_data):
-    customer_values = customer_data.values
+pipeline = joblib.load("models/saved_model/churn_prediction_pipeline.pkl")
 
-    prediction = model.predict(customer_values)
-    probability = model.predict_proba(customer_values)
+
+def predict_churn(customer_data: pd.DataFrame):
+    """
+    Predict customer churn using the trained pipeline.
+
+    The pipeline includes:
+    1. StandardScaler
+    2. Logistic Regression model
+
+    Therefore, FastAPI can send normal model-ready raw numeric values,
+    and scaling is applied automatically before prediction.
+    """
+
+    prediction = pipeline.predict(customer_data)[0]
+    probability = pipeline.predict_proba(customer_data)[0][1]
 
     return {
-        "prediction": int(prediction[0]),
-        "churn_probability": round(float(probability[0][1]), 4)
+        "prediction": int(prediction),
+        "churn_probability": round(float(probability), 4)
     }

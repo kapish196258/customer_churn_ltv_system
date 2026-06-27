@@ -379,12 +379,13 @@ customer_churn_ltv_system/
 │   ├── routes.py
 │   ├── schemas.py
 │   └── screenshots/
+│       ├── fastapi_swagger_input.png
 │       └── fastapi_prediction.png
 ├── dashboard/
 │   ├── dashboard_sql_queries.py
 │   ├── dashboard_sql_queries.md
 │   ├── metabase_dashboard_progress.md
-│   └── dashboard_screenshots/
+│   └── dashboard_screenshot/
 │       ├── executive_overview.png
 │       ├── executive_overview_high_value_filter.png
 │       ├── executive_overview_medium_value_filter.png
@@ -405,7 +406,8 @@ customer_churn_ltv_system/
 │       └── high_priority_customers.csv
 ├── models/
 │   └── saved_model/
-│       └── logistic_regression_model.pkl
+│       ├── logistic_regression_model.pkl
+│       └── churn_prediction_pipeline.pkl
 ├── notebooks/
 │   ├── eda.ipynb
 │   ├── data_cleaning.ipynb
@@ -427,6 +429,7 @@ customer_churn_ltv_system/
 │   │   └── ltv_calculator.py
 │   ├── models/
 │   │   ├── churn_predict.py
+│   │   ├── train_churn_pipeline.py
 │   │   ├── ltv_predict.py
 │   │   └── shap_analysis.py
 │   └── utils/
@@ -550,11 +553,17 @@ Example response:
 }
 ```
 
-### FastAPI Prediction Screenshot
+### FastAPI Swagger Interface
 
-The churn prediction API was tested successfully using Swagger UI.
+The FastAPI application provides an interactive Swagger UI where users can test the churn prediction endpoint using model-ready encoded numerical input.
 
-![FastAPI Prediction](api/screenshots/fastapi_prediction.png)
+![FastAPI Swagger Input](api/screenshots/fastapi_swagger_input.png)
+
+### FastAPI Prediction Result
+
+The `/predict` endpoint was tested successfully. The API returned a churn prediction of `1`, meaning the customer is likely to churn, with a churn probability of `0.7505`.
+
+![FastAPI Prediction Result](api/screenshots/fastapi_prediction.png)
 
 ---
 
