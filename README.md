@@ -372,6 +372,8 @@ These customers have high estimated lifetime value and are at churn risk.
 
 ## Project Structure
 
+## Project Structure
+
 ```text
 customer_churn_ltv_system/
 ├── api/
@@ -434,7 +436,10 @@ customer_churn_ltv_system/
 │   │   └── shap_analysis.py
 │   └── utils/
 │       └── config.py
+├── Dockerfile
+├── .dockerignore
 ├── requirements.txt
+├── requirements-docker.txt
 ├── README.md
 └── .gitignore
 ```
@@ -564,6 +569,42 @@ The FastAPI application provides an interactive Swagger UI where users can test 
 The `/predict` endpoint was tested successfully. The API returned a churn prediction of `1`, meaning the customer is likely to churn, with a churn probability of `0.7505`.
 
 ![FastAPI Prediction Result](api/screenshots/fastapi_prediction.png)
+
+---
+
+## Docker Usage
+
+The FastAPI churn prediction service is containerized using Docker so the API can be run in a consistent environment without manually setting up Python dependencies.
+
+### Build Docker Image
+
+Run the following command from the project root directory:
+
+```bash
+docker build -t customer-churn-ltv-api .
+```
+
+### Run Docker Container
+
+After the image is built successfully, run the FastAPI service inside a Docker container:
+
+```bash
+docker run --rm -p 8000:8000 customer-churn-ltv-api
+```
+
+### Open Swagger UI
+
+After the container starts, open the Swagger UI in your browser:
+
+```text
+http://localhost:8000/docs
+```
+
+The `/predict` endpoint can be tested directly from Swagger UI.
+
+### Docker Runtime Dependencies
+
+A separate `requirements-docker.txt` file is used for Docker deployment. It contains only the packages required to run the FastAPI service inside the container, while the main `requirements.txt` keeps the full local development environment dependencies.
 
 ---
 
