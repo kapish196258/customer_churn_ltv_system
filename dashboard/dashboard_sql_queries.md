@@ -1,6 +1,6 @@
 # Dashboard SQL Queries & Business Insights
 
-This document contains the key PostgreSQL queries used for customer churn, Customer Lifetime Value (LTV), revenue risk analysis, customer segmentation, and customer retention planning.
+This document contains the key PostgreSQL queries used for customer churn, Customer Lifetime Value (LTV), revenue risk analysis, customer segmentation, dashboard filtering, and customer retention planning.
 
 The queries documented here are used for Metabase dashboard development and business reporting.
 
@@ -8,10 +8,40 @@ The queries documented here are used for Metabase dashboard development and busi
 
 # Tables Used
 
-| Table Name              | Purpose                                                                                                |
-| ----------------------- | ------------------------------------------------------------------------------------------------------ |
-| customer_churn_ltv      | Final customer analytics table containing churn, LTV, segmentation, customer priority, and Customer_ID |
-| high_priority_customers | High Value - High Risk customers identified for retention actions                                      |
+| Table Name                | Purpose                                                                                                |
+| ------------------------- | ------------------------------------------------------------------------------------------------------ |
+| `customer_churn_ltv`      | Final customer analytics table containing churn, LTV, segmentation, customer priority, and Customer_ID |
+| `high_priority_customers` | High Value - High Risk customers identified for retention actions                                      |
+
+---
+
+# Dashboard Filter
+
+An interactive dashboard filter was added in Metabase to allow users to analyze churn and revenue insights by LTV segment.
+
+## Filter Configuration
+
+| Setting              | Value                                |
+| -------------------- | ------------------------------------ |
+| Filter Name          | LTV Segment                          |
+| Variable Name        | `ltv_segment`                        |
+| Variable Type        | Field Filter                         |
+| Field Mapping        | `customer_churn_ltv` → `LTV_Segment` |
+| Filter Widget Type   | Dropdown list                        |
+| People Can Pick      | A single value                       |
+| Values               | Low Value, Medium Value, High Value  |
+| Default Value        | No default                           |
+| Always Require Value | Off                                  |
+
+## Filter Purpose
+
+The LTV Segment filter allows users to drill down into specific customer value groups:
+
+* Low Value
+* Medium Value
+* High Value
+
+This filter is connected only to selected dashboard cards where LTV-segment-level analysis is useful.
 
 ---
 
@@ -41,6 +71,14 @@ FROM customer_churn_ltv;
 * Total Customer Count
 * Executive Overview
 
+## Visualization Type
+
+Number KPI Card
+
+## Filter Status
+
+Not connected to the LTV Segment filter.
+
 ---
 
 # 2. High-Priority Customers
@@ -62,6 +100,14 @@ FROM high_priority_customers;
 * KPI Card
 * High-Priority Customer Count
 * Retention Risk Overview
+
+## Visualization Type
+
+Number KPI Card
+
+## Filter Status
+
+Not connected to the LTV Segment filter.
 
 ---
 
@@ -85,9 +131,95 @@ FROM high_priority_customers;
 * Revenue Risk Indicator
 * Executive Business Impact
 
+## Visualization Type
+
+Number KPI Card
+
+## Filter Status
+
+Not connected to the LTV Segment filter.
+
 ---
 
-# 4. Customer Distribution by LTV Segment
+# 4. Overall Churn Rate
+
+## Business Question
+
+What percentage of customers have churned?
+
+## SQL Query
+
+```sql
+SELECT
+    ROUND((SUM("Churn")::numeric / COUNT(*)) * 100, 2) AS overall_churn_rate_percentage
+FROM customer_churn_ltv
+WHERE 1=1
+[[AND {{ltv_segment}}]];
+```
+
+## Dashboard Usage
+
+* KPI Card
+* Overall Customer Churn Percentage
+* Executive Overview
+
+## Visualization Type
+
+Number KPI Card
+
+## Filter Status
+
+Connected to the LTV Segment filter.
+
+## Business Insight
+
+This KPI shows the percentage of customers who have churned. When the LTV Segment filter is applied, the churn rate changes according to the selected customer value segment.
+
+---
+
+# 5. Churn vs Non-Churn Customers
+
+## Business Question
+
+How many customers churned versus how many customers stayed?
+
+## SQL Query
+
+```sql
+SELECT
+    CASE 
+        WHEN "Churn" = 1 THEN 'Churned'
+        ELSE 'Not Churned'
+    END AS churn_status,
+    COUNT(*) AS customer_count
+FROM customer_churn_ltv
+WHERE 1=1
+[[AND {{ltv_segment}}]]
+GROUP BY churn_status
+ORDER BY customer_count DESC;
+```
+
+## Dashboard Usage
+
+* Bar Chart
+* Churned vs Not Churned Customer Count
+* Churn Distribution Overview
+
+## Visualization Type
+
+Bar Chart
+
+## Filter Status
+
+Connected to the LTV Segment filter.
+
+## Business Insight
+
+This chart explains the overall churn rate by showing the actual number of churned and non-churned customers.
+
+---
+
+# 6. Customer Distribution by LTV Segment
 
 ## Business Question
 
@@ -110,9 +242,17 @@ ORDER BY customer_count DESC;
 * Pie Chart
 * Customer Segmentation Overview
 
+## Visualization Type
+
+Donut Chart / Pie Chart
+
+## Filter Status
+
+Not connected to the LTV Segment filter.
+
 ---
 
-# 5. Churn Rate by LTV Segment
+# 7. Churn Rate by LTV Segment
 
 ## Business Question
 
@@ -135,9 +275,17 @@ ORDER BY churn_rate_percentage DESC;
 * Churn Rate Analysis
 * Segment Risk Comparison
 
+## Visualization Type
+
+Bar Chart
+
+## Filter Status
+
+Not connected to the LTV Segment filter.
+
 ---
 
-# 6. Revenue Value by Customer Priority
+# 8. Revenue Value by Customer Priority
 
 ## Business Question
 
@@ -151,6 +299,8 @@ SELECT
     COUNT(*) AS customer_count,
     ROUND((SUM("Estimated_LTV") / 1000000.0)::numeric, 2) AS total_ltv_million
 FROM customer_churn_ltv
+WHERE 1=1
+[[AND {{ltv_segment}}]]
 GROUP BY "Customer_Priority"
 ORDER BY total_ltv_million DESC;
 ```
@@ -161,9 +311,21 @@ ORDER BY total_ltv_million DESC;
 * Revenue Contribution Analysis
 * Customer Priority Comparison
 
+## Visualization Type
+
+Horizontal Bar Chart
+
+## Filter Status
+
+Connected to the LTV Segment filter.
+
+## Business Insight
+
+This chart helps identify which customer priority groups contribute the highest revenue value. With the LTV Segment filter, users can analyze revenue contribution within a selected segment.
+
 ---
 
-# 7. LTV at Risk by Segment
+# 9. LTV at Risk by Segment
 
 ## Business Question
 
@@ -189,9 +351,17 @@ ORDER BY ltv_at_risk_million DESC;
 * Revenue Risk Chart
 * Segment-wise Retention Planning
 
+## Visualization Type
+
+Donut Chart
+
+## Filter Status
+
+Not connected to the LTV Segment filter.
+
 ---
 
-# 8. Retention Priority Summary
+# 10. Retention Priority Summary
 
 ## Business Question
 
@@ -207,6 +377,8 @@ SELECT
     ROUND(AVG("tenure")::numeric, 0) AS avg_tenure_months,
     ROUND(AVG("Estimated_LTV")::numeric, 2) AS avg_ltv
 FROM customer_churn_ltv
+WHERE 1=1
+[[AND {{ltv_segment}}]]
 GROUP BY "Customer_Priority"
 ORDER BY avg_ltv DESC;
 ```
@@ -218,9 +390,21 @@ ORDER BY avg_ltv DESC;
 * Customer Group Comparison
 * Retention Strategy Planning
 
+## Visualization Type
+
+Table
+
+## Filter Status
+
+Connected to the LTV Segment filter.
+
+## Business Insight
+
+This table helps compare customer groups using customer count, average monthly charges, average tenure, and average LTV. The LTV Segment filter allows focused analysis of Low, Medium, or High Value customers.
+
 ---
 
-# 9. Segment-wise Churn and Revenue Impact
+# 11. Segment-wise Churn and Revenue Impact
 
 ## Business Question
 
@@ -237,6 +421,8 @@ SELECT
     ROUND((SUM("Estimated_LTV") / 1000000.0)::numeric, 2) AS total_ltv_million,
     ROUND((SUM(CASE WHEN "Churn" = 1 THEN "Estimated_LTV" ELSE 0 END) / 1000000.0)::numeric, 2) AS churned_ltv_million
 FROM customer_churn_ltv
+WHERE 1=1
+[[AND {{ltv_segment}}]]
 GROUP BY "LTV_Segment"
 ORDER BY churned_ltv_million DESC;
 ```
@@ -248,9 +434,21 @@ ORDER BY churned_ltv_million DESC;
 * Segment-wise Business Impact Analysis
 * Churn and Revenue Comparison
 
+## Visualization Type
+
+Table / Pivot Table
+
+## Filter Status
+
+Connected to the LTV Segment filter.
+
+## Business Insight
+
+This table shows how churn and revenue impact vary across LTV segments. It helps identify where retention actions can protect the most customer value.
+
 ---
 
-# 10. Top 20 Customers to Retain
+# 12. Top 20 Customers to Retain
 
 ## Business Question
 
@@ -266,7 +464,9 @@ SELECT
     "tenure",
     "LTV_Segment",
     "Customer_Priority"
-FROM high_priority_customers
+FROM customer_churn_ltv
+WHERE "Churn" = 1
+[[AND {{ltv_segment}}]]
 ORDER BY "Estimated_LTV" DESC, "MonthlyCharges" DESC
 LIMIT 20;
 ```
@@ -277,9 +477,21 @@ LIMIT 20;
 * Customer Success Actions
 * High-Priority Customer List
 
+## Visualization Type
+
+Table
+
+## Filter Status
+
+Connected to the LTV Segment filter.
+
+## Business Insight
+
+This table provides a customer-level retention list. The LTV Segment filter allows teams to view top customers to retain within Low, Medium, or High Value segments.
+
 ---
 
-# 11. Top 10 Highest LTV Customers at Risk
+# 13. Top 10 Highest LTV Customers at Risk
 
 ## Business Question
 
@@ -295,7 +507,9 @@ SELECT
     "tenure",
     "LTV_Segment",
     "Customer_Priority"
-FROM high_priority_customers
+FROM customer_churn_ltv
+WHERE "Churn" = 1
+[[AND {{ltv_segment}}]]
 ORDER BY "Estimated_LTV" DESC
 LIMIT 10;
 ```
@@ -306,23 +520,37 @@ LIMIT 10;
 * Highest-Value Retention Targets
 * Customer-Level Action Planning
 
+## Visualization Type
+
+Table
+
+## Filter Status
+
+Connected to the LTV Segment filter.
+
+## Business Insight
+
+This table identifies the highest-value churn-risk customers so that retention teams can act on the most financially important customers first.
+
 ---
 
 # Dashboard Plan
 
-| Dashboard Component           | Query Used                            | Recommended Visualization |
-| ----------------------------- | ------------------------------------- | ------------------------- |
-| Total Customers KPI           | Total Customers                       | KPI Number                |
-| High-Priority Customers KPI   | High-Priority Customers               | KPI Number                |
-| Total LTV at Risk KPI         | Total LTV at Risk Millions            | KPI Number                |
-| LTV Segment Distribution      | Customer Distribution by LTV Segment  | Donut Chart               |
-| Churn Rate Analysis           | Churn Rate by LTV Segment             | Bar Chart                 |
-| Revenue Contribution Analysis | Revenue Value by Customer Priority    | Horizontal Bar Chart      |
-| Revenue Risk Analysis         | LTV at Risk by Segment                | Donut Chart               |
-| Retention Summary             | Retention Priority Summary            | Table                     |
-| Segment Impact Analysis       | Segment-wise Churn and Revenue Impact | Table / Pivot Table       |
-| Retention Target List         | Top 20 Customers to Retain            | Table                     |
-| Highest LTV Customers at Risk | Top 10 Highest LTV Customers at Risk  | Table                     |
+| Dashboard Component           | Query Used                            | Recommended Visualization | Filter Connected |
+| ----------------------------- | ------------------------------------- | ------------------------- | ---------------- |
+| Total Customers KPI           | Total Customers                       | KPI Number                | No               |
+| High-Priority Customers KPI   | High-Priority Customers               | KPI Number                | No               |
+| Total LTV at Risk KPI         | Total LTV at Risk Millions            | KPI Number                | No               |
+| Overall Churn Rate KPI        | Overall Churn Rate                    | KPI Number                | Yes              |
+| Churn vs Non-Churn Customers  | Churn vs Non-Churn Customers          | Bar Chart                 | Yes              |
+| LTV Segment Distribution      | Customer Distribution by LTV Segment  | Donut Chart               | No               |
+| Churn Rate Analysis           | Churn Rate by LTV Segment             | Bar Chart                 | No               |
+| Revenue Contribution Analysis | Revenue Value by Customer Priority    | Horizontal Bar Chart      | Yes              |
+| Revenue Risk Analysis         | LTV at Risk by Segment                | Donut Chart               | No               |
+| Retention Summary             | Retention Priority Summary            | Table                     | Yes              |
+| Segment Impact Analysis       | Segment-wise Churn and Revenue Impact | Table / Pivot Table       | Yes              |
+| Retention Target List         | Top 20 Customers to Retain            | Table                     | Yes              |
+| Highest LTV Customers at Risk | Top 10 Highest LTV Customers at Risk  | Table                     | Yes              |
 
 ---
 
@@ -337,6 +565,8 @@ Recommended components:
 * Total Customers KPI
 * High-Priority Customers KPI
 * Total LTV at Risk KPI
+* Overall Churn Rate KPI
+* Churn vs Non-Churn Customers
 * Customer Distribution by LTV Segment
 * Churn Rate by LTV Segment
 * Revenue Value by Customer Priority
@@ -355,6 +585,29 @@ Recommended components:
 
 ---
 
+# Filter-Enabled Dashboard Cards
+
+The following cards are connected to the LTV Segment filter:
+
+* Overall Churn Rate
+* Churn vs Non-Churn Customers
+* Revenue Value by Customer Priority
+* Retention Priority Summary
+* Segment-wise Churn and Revenue Impact
+* Top 20 Customers to Retain
+* Top 10 Highest LTV Customers at Risk
+
+The following cards are not connected to the LTV Segment filter because they already show full segment-level comparison or fixed high-priority summary:
+
+* Total Customers
+* High-Priority Customers
+* Total LTV at Risk Millions
+* Customer Distribution by LTV Segment
+* Churn Rate by LTV Segment
+* LTV at Risk by Segment
+
+---
+
 # Expected Business Outcomes
 
 * Identify customers at risk of churn.
@@ -365,6 +618,7 @@ Recommended components:
 * Provide dashboard-ready business insights.
 * Enable customer-level retention actions using Customer_ID.
 * Help business teams focus on customers with the highest financial impact.
+* Allow segment-level drill-down using the interactive LTV Segment filter.
 
 ---
 
@@ -376,9 +630,11 @@ The dashboard helps answer:
 
 * How many customers exist in the final dataset?
 * How many customers are high-priority?
+* What is the overall churn rate?
 * How much estimated LTV is at risk?
 * Which customer segments churn the most?
 * Which customer groups contribute the most value?
 * Which customers should be retained first?
+* How do retention insights change across Low Value, Medium Value, and High Value customers?
 
-This makes the dashboard useful for both technical analysis and business decision-making.
+The added LTV Segment filter makes the dashboard more interactive and useful for business decision-making by allowing users to analyze churn, revenue risk, and retention actions by customer value segment.
