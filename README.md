@@ -672,43 +672,43 @@ The filter allows users to analyze churn, revenue value, and retention insights 
 
 ### Executive Overview
 
-![Executive Overview](dashboard/dashboard_screenshots/executive_overview.png)
+![Executive Overview](dashboard/dashboard_screenshot/executive_overview.png)
 
 ### Executive Overview with High Value Filter
 
-![Executive Overview High Value Filter](dashboard/dashboard_screenshots/executive_overview_high_value_filter.png)
+![Executive Overview High Value Filter](dashboard/dashboard_screenshot/executive_overview_high_value_filter.png)
 
 ### Executive Overview with Medium Value Filter
 
-![Executive Overview Medium Value Filter](dashboard/dashboard_screenshots/executive_overview_medium_value_filter.png)
+![Executive Overview Medium Value Filter](dashboard/dashboard_screenshot/executive_overview_medium_value_filter.png)
 
 ### Executive Overview with Low Value Filter
 
-![Executive Overview Low Value Filter](dashboard/dashboard_screenshots/executive_overview_low_value_filter.png)
+![Executive Overview Low Value Filter](dashboard/dashboard_screenshot/executive_overview_low_value_filter.png)
 
 ### Retention Action & Customer Insights
 
-![Retention Action & Customer Insights](dashboard/dashboard_screenshots/retention_action_insights.png)
+![Retention Action & Customer Insights](dashboard/dashboard_screenshot/retention_action_insights.png)
 
 ### Retention Top Customers to Retain
 
-![Retention Top Customers to Retain](dashboard/dashboard_screenshots/retention_top_customers_to_retain.png)
+![Retention Top Customers to Retain](dashboard/dashboard_screenshot/retention_top_customers_to_retain.png)
 
 ### Highest LTV Customers at Risk
 
-![Highest LTV Customers at Risk](dashboard/dashboard_screenshots/highest_ltv_customers_at_risk.png)
+![Highest LTV Customers at Risk](dashboard/dashboard_screenshot/highest_ltv_customers_at_risk.png)
 
 ### Retention Insights with High Value Filter
 
-![Retention High Value Filter](dashboard/dashboard_screenshots/retention_high_value_filter.png)
+![Retention High Value Filter](dashboard/dashboard_screenshot/retention_high_value_filter.png)
 
 ### Retention Insights with Medium Value Filter
 
-![Retention Medium Value Filter](dashboard/dashboard_screenshots/retention_medium_value_filter.png)
+![Retention Medium Value Filter](dashboard/dashboard_screenshot/retention_medium_value_filter.png)
 
 ### Retention Insights with Low Value Filter
 
-![Retention Low Value Filter](dashboard/dashboard_screenshots/retention_low_value_filter.png)
+![Retention Low Value Filter](dashboard/dashboard_screenshot/retention_low_value_filter.png)
 
 ---
 
